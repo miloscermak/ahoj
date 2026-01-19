@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Workshop Q&A</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --accent: #00ff88;
+            --accent-dim: #00ff8833;
+            --text: #e8e8ec;
+            --text-dim: #6b6b7b;
+            --border: #2a2a3a;
+            --danger: #ff4757;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            background-image:
+                radial-gradient(ellipse at 20% 0%, rgba(0, 255, 136, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem 0;
+        }
+
+        h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        h1 span {
+            color: var(--accent);
+        }
+
+        .admin-badge {
+            display: inline-block;
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-family: 'Space Mono', monospace;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.875rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .badge {
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-family: 'Space Mono', monospace;
+        }
+
+        textarea {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            transition: border-color 0.2s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        textarea::placeholder {
+            color: var(--text-dim);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg-dark);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 71, 87, 0.3);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .responses-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .response-item {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            animation: slideIn 0.3s ease;
+            position: relative;
+        }
+
+        .response-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent);
+            border-radius: 3px 0 0 3px;
+        }
+
+        .response-item.new {
+            border-color: var(--accent);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .response-time {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 0.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-dim);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-dim);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.offline {
+            background: var(--danger);
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .error-banner {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid var(--danger);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--danger);
+            display: none;
+        }
+
+        .error-banner.show {
+            display: block;
+        }
+
+        .current-question-preview {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            font-style: italic;
+            color: var(--text-dim);
+        }
+
+        .current-question-preview.active {
+            color: var(--text);
+            font-style: normal;
+            border-color: var(--accent);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-dim);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--border);
+            margin-top: 3rem;
+        }
+
+        .connection-status {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <span class="admin-badge">ADMIN</span>
+            <h1>Workshop <span>Q&A</span></h1>
+            <p class="subtitle">Sprava otazek a odpovedi</p>
+        </header>
+
+        <div id="errorBanner" class="error-banner">
+            Chyba pripojeni k databazi.
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Aktualni otazka</span>
+                <span class="status">
+                    <span id="statusDot" class="status-dot"></span>
+                    <span id="statusText">Pripojuji...</span>
+                </span>
+            </div>
+
+            <div id="currentQuestionPreview" class="current-question-preview">
+                Zadna aktivni otazka
+            </div>
+
+            <textarea
+                id="adminQuestion"
+                rows="3"
+                placeholder="Napiste otazku pro ucastniky..."
+            ></textarea>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" id="publishBtn" onclick="publishQuestion()">
+                    Publikovat otazku
+                </button>
+                <button class="btn btn-secondary" onclick="clearQuestion()">
+                    Smazat otazku
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Odpovedi</span>
+                <span class="badge" id="responseCount">0 odpovedi</span>
+            </div>
+
+            <div id="responsesList" class="responses-list">
+                <div class="empty-state">
+                    <div class="empty-state-icon">💬</div>
+                    <p>Zatim zadne odpovedi</p>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-danger" onclick="clearResponses()">
+                    Smazat vsechny odpovedi
+                </button>
+            </div>
+        </div>
+
+        <footer>
+            <div class="connection-status">
+                Status: <span id="connectionStatus">Odpojeno</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://ywhzaomdnxeelalwupbu.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3aHphb21kbnhlZWxhbHd1cGJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4NDM5ODgsImV4cCI6MjA4NDQxOTk4OH0.TXABm99I3H9FgFwAe7tJMzCDVAmzE0uPyqIzQZbpj_U';
+
+        let supabaseClient;
+        let currentQuestion = null;
+        let responses = [];
+
+        async function init() {
+            try {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+                const { data, error } = await supabaseClient.from('questions').select('*').limit(1);
+                if (error) throw error;
+
+                updateConnectionStatus(true);
+                await loadQuestion();
+                await loadResponses();
+                setupRealtimeSubscriptions();
+
+            } catch (error) {
+                console.error('Chyba inicializace:', error);
+                updateConnectionStatus(false);
+                document.getElementById('errorBanner').classList.add('show');
+            }
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            const connectionStatus = document.getElementById('connectionStatus');
+
+            if (connected) {
+                statusDot.classList.remove('offline');
+                statusText.textContent = 'Zive';
+                connectionStatus.textContent = 'Pripojeno';
+            } else {
+                statusDot.classList.add('offline');
+                statusText.textContent = 'Offline';
+                connectionStatus.textContent = 'Odpojeno';
+            }
+        }
+
+        function setupRealtimeSubscriptions() {
+            supabaseClient
+                .channel('questions-channel')
+                .on('postgres_changes',
+                    { event: '*', schema: 'public', table: 'questions' },
+                    (payload) => {
+                        if (payload.eventType === 'DELETE') {
+                            currentQuestion = null;
+                        } else {
+                            currentQuestion = payload.new;
+                        }
+                        updateQuestionPreview();
+                    }
+                )
+                .subscribe();
+
+            supabaseClient
+                .channel('responses-channel')
+                .on('postgres_changes',
+                    { event: '*', schema: 'public', table: 'responses' },
+                    (payload) => {
+                        if (payload.eventType === 'INSERT') {
+                            responses.unshift(payload.new);
+                            updateResponsesUI(true);
+                        } else if (payload.eventType === 'DELETE') {
+                            loadResponses();
+                        }
+                    }
+                )
+                .subscribe();
+        }
+
+        async function loadQuestion() {
+            const { data, error } = await supabaseClient
+                .from('questions')
+                .select('*')
+                .eq('id', 1)
+                .single();
+
+            if (error && error.code !== 'PGRST116') {
+                console.error('Chyba nacitani otazky:', error);
+                return;
+            }
+
+            currentQuestion = data || null;
+            updateQuestionPreview();
+        }
+
+        async function loadResponses() {
+            const { data, error } = await supabaseClient
+                .from('responses')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Chyba nacitani odpovedi:', error);
+                return;
+            }
+
+            responses = data || [];
+            updateResponsesUI();
+        }
+
+        async function publishQuestion() {
+            const questionText = document.getElementById('adminQuestion').value.trim();
+            if (!questionText) {
+                alert('Napiste prosim otazku');
+                return;
+            }
+
+            const btn = document.getElementById('publishBtn');
+            btn.disabled = true;
+
+            try {
+                const { error: questionError } = await supabaseClient
+                    .from('questions')
+                    .upsert({ id: 1, text: questionText });
+
+                if (questionError) throw questionError;
+
+                const { error: deleteError } = await supabaseClient
+                    .from('responses')
+                    .delete()
+                    .neq('id', 0);
+
+                if (deleteError) throw deleteError;
+
+                responses = [];
+                updateResponsesUI();
+                document.getElementById('adminQuestion').value = '';
+
+            } catch (error) {
+                console.error('Chyba publikovani:', error);
+                alert('Chyba pri publikovani otazky');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function clearQuestion() {
+            try {
+                const { error } = await supabaseClient
+                    .from('questions')
+                    .delete()
+                    .eq('id', 1);
+
+                if (error) throw error;
+
+                document.getElementById('adminQuestion').value = '';
+                currentQuestion = null;
+                updateQuestionPreview();
+
+            } catch (error) {
+                console.error('Chyba mazani otazky:', error);
+            }
+        }
+
+        async function clearResponses() {
+            if (!confirm('Opravdu chcete smazat vsechny odpovedi?')) return;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('responses')
+                    .delete()
+                    .neq('id', 0);
+
+                if (error) throw error;
+
+                responses = [];
+                updateResponsesUI();
+
+            } catch (error) {
+                console.error('Chyba mazani odpovedi:', error);
+            }
+        }
+
+        function updateQuestionPreview() {
+            const preview = document.getElementById('currentQuestionPreview');
+
+            if (currentQuestion && currentQuestion.text) {
+                preview.textContent = currentQuestion.text;
+                preview.classList.add('active');
+            } else {
+                preview.textContent = 'Zadna aktivni otazka';
+                preview.classList.remove('active');
+            }
+        }
+
+        function updateResponsesUI(isNewResponse = false) {
+            const responsesList = document.getElementById('responsesList');
+            const responseCount = document.getElementById('responseCount');
+
+            const count = responses.length;
+            responseCount.textContent = `${count} odpoved${count === 1 ? '' : 'i'}`;
+
+            if (responses.length === 0) {
+                responsesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💬</div>
+                        <p>Zatim zadne odpovedi</p>
+                    </div>
+                `;
+            } else {
+                responsesList.innerHTML = responses.map((r, i) => `
+                    <div class="response-item ${i === 0 && isNewResponse ? 'new' : ''}">
+                        <p>${escapeHtml(r.text)}</p>
+                        <span class="response-time">${formatTime(r.created_at)}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatTime(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleTimeString('cs-CZ', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>

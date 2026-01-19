@@ -17,35 +17,35 @@
             --border: #2a2a3a;
             --danger: #ff4757;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'DM Sans', sans-serif;
             background: var(--bg-dark);
             color: var(--text);
             min-height: 100vh;
-            background-image: 
+            background-image:
                 radial-gradient(ellipse at 20% 0%, rgba(0, 255, 136, 0.08) 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 100%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
         }
-        
+
         .container {
-            max-width: 900px;
+            max-width: 700px;
             margin: 0 auto;
             padding: 2rem;
         }
-        
+
         header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             padding: 2rem 0;
         }
-        
+
         h1 {
             font-family: 'Space Mono', monospace;
             font-size: 2.5rem;
@@ -53,64 +53,16 @@
             letter-spacing: -0.02em;
             margin-bottom: 0.5rem;
         }
-        
+
         h1 span {
             color: var(--accent);
         }
-        
+
         .subtitle {
             color: var(--text-dim);
             font-size: 1rem;
         }
-        
-        .nav-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
-            background: var(--bg-card);
-            padding: 0.5rem;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-        
-        .nav-tab {
-            flex: 1;
-            padding: 1rem 1.5rem;
-            background: transparent;
-            border: none;
-            color: var(--text-dim);
-            font-family: 'Space Mono', monospace;
-            font-size: 0.875rem;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-        
-        .nav-tab:hover {
-            color: var(--text);
-            background: rgba(255, 255, 255, 0.05);
-        }
-        
-        .nav-tab.active {
-            background: var(--accent);
-            color: var(--bg-dark);
-            font-weight: 700;
-        }
-        
-        .panel {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .panel.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
+
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -118,14 +70,14 @@
             padding: 2rem;
             margin-bottom: 1.5rem;
         }
-        
+
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
         }
-        
+
         .card-title {
             font-family: 'Space Mono', monospace;
             font-size: 0.875rem;
@@ -133,17 +85,8 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
         }
-        
-        .badge {
-            background: var(--accent-dim);
-            color: var(--accent);
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-family: 'Space Mono', monospace;
-        }
-        
-        textarea, input[type="text"] {
+
+        textarea {
             width: 100%;
             background: var(--bg-dark);
             border: 2px solid var(--border);
@@ -155,16 +98,16 @@
             resize: vertical;
             transition: border-color 0.2s ease;
         }
-        
-        textarea:focus, input[type="text"]:focus {
+
+        textarea:focus {
             outline: none;
             border-color: var(--accent);
         }
-        
-        textarea::placeholder, input::placeholder {
+
+        textarea::placeholder {
             color: var(--text-dim);
         }
-        
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -178,117 +121,49 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
+
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-        
+
         .btn-primary {
             background: var(--accent);
             color: var(--bg-dark);
         }
-        
+
         .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(0, 255, 136, 0.3);
         }
-        
-        .btn-secondary {
-            background: transparent;
-            border: 2px solid var(--border);
-            color: var(--text);
-        }
-        
-        .btn-secondary:hover:not(:disabled) {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-        
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-        
+
         .btn-group {
             display: flex;
             gap: 1rem;
             margin-top: 1.5rem;
         }
-        
+
         .question-display {
             text-align: center;
             padding: 3rem 2rem;
         }
-        
+
         .question-text {
             font-size: 1.75rem;
             font-weight: 500;
             line-height: 1.4;
-            margin-bottom: 2rem;
         }
-        
+
         .no-question {
             color: var(--text-dim);
             font-style: italic;
         }
-        
-        .responses-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            max-height: 500px;
-            overflow-y: auto;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        
-        .response-item {
-            background: var(--bg-dark);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.25rem 1.5rem;
-            animation: slideIn 0.3s ease;
-            position: relative;
-        }
-        
-        .response-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: var(--accent);
-            border-radius: 3px 0 0 3px;
-        }
-        
-        .response-item.new {
-            border-color: var(--accent);
-        }
-        
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        
-        .response-time {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            margin-top: 0.5rem;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-dim);
-        }
-        
-        .empty-state-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-        
+
         .status {
             display: flex;
             align-items: center;
@@ -296,7 +171,7 @@
             font-size: 0.875rem;
             color: var(--text-dim);
         }
-        
+
         .status-dot {
             width: 8px;
             height: 8px;
@@ -304,17 +179,17 @@
             background: var(--accent);
             animation: pulse 2s infinite;
         }
-        
+
         .status-dot.offline {
             background: var(--danger);
             animation: none;
         }
-        
+
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
-        
+
         .success-message {
             background: var(--accent-dim);
             border: 1px solid var(--accent);
@@ -323,13 +198,14 @@
             text-align: center;
             color: var(--accent);
             display: none;
+            margin-top: 1.5rem;
         }
-        
+
         .success-message.show {
             display: block;
             animation: fadeIn 0.3s ease;
         }
-        
+
         .error-banner {
             background: rgba(255, 71, 87, 0.1);
             border: 1px solid var(--danger);
@@ -339,11 +215,11 @@
             color: var(--danger);
             display: none;
         }
-        
+
         .error-banner.show {
             display: block;
         }
-        
+
         footer {
             text-align: center;
             padding: 2rem;
@@ -352,7 +228,7 @@
             border-top: 1px solid var(--border);
             margin-top: 3rem;
         }
-        
+
         .connection-status {
             font-family: 'Space Mono', monospace;
             font-size: 0.75rem;
@@ -363,181 +239,105 @@
     <div class="container">
         <header>
             <h1>Workshop <span>Q&A</span></h1>
-            <p class="subtitle">Interaktivní otázky a odpovědi</p>
+            <p class="subtitle">Interaktivni otazky a odpovedi</p>
         </header>
-        
+
         <div id="errorBanner" class="error-banner">
-            ⚠️ Chyba připojení k databázi. Zkontrolujte nastavení Supabase.
+            Chyba pripojeni k databazi.
         </div>
-        
-        <nav class="nav-tabs">
-            <button class="nav-tab active" data-tab="participant">👤 Účastník</button>
-            <button class="nav-tab" data-tab="admin">⚙️ Admin</button>
-        </nav>
-        
-        <!-- PARTICIPANT PANEL -->
-        <div id="participant" class="panel active">
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Aktuální otázka</span>
-                    <span class="status">
-                        <span id="statusDot" class="status-dot"></span>
-                        <span id="statusText">Připojuji...</span>
-                    </span>
-                </div>
-                
-                <div class="question-display">
-                    <p id="currentQuestion" class="question-text no-question">
-                        Čekám na otázku od moderátora...
-                    </p>
-                </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Aktualni otazka</span>
+                <span class="status">
+                    <span id="statusDot" class="status-dot"></span>
+                    <span id="statusText">Pripojuji...</span>
+                </span>
             </div>
-            
-            <div class="card" id="answerCard" style="display: none;">
-                <div class="card-header">
-                    <span class="card-title">Vaše odpověď</span>
-                </div>
-                
-                <textarea 
-                    id="participantAnswer" 
-                    rows="4" 
-                    placeholder="Napište svou odpověď..."
-                ></textarea>
-                
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()">
-                        ✓ Odeslat odpověď
-                    </button>
-                </div>
-                
-                <div id="successMessage" class="success-message">
-                    ✓ Odpověď byla odeslána!
-                </div>
+
+            <div class="question-display">
+                <p id="currentQuestion" class="question-text no-question">
+                    Cekam na otazku od moderatora...
+                </p>
             </div>
         </div>
-        
-        <!-- ADMIN PANEL -->
-        <div id="admin" class="panel">
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Nová otázka</span>
-                </div>
-                
-                <textarea 
-                    id="adminQuestion" 
-                    rows="3" 
-                    placeholder="Napište otázku pro účastníky..."
-                ></textarea>
-                
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="publishBtn" onclick="publishQuestion()">
-                        📢 Publikovat otázku
-                    </button>
-                    <button class="btn btn-secondary" onclick="clearQuestion()">
-                        🗑️ Smazat otázku
-                    </button>
-                </div>
+
+        <div class="card" id="answerCard" style="display: none;">
+            <div class="card-header">
+                <span class="card-title">Vase odpoved</span>
             </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Odpovědi</span>
-                    <span class="badge" id="responseCount">0 odpovědí</span>
-                </div>
-                
-                <div id="responsesList" class="responses-list">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">💬</div>
-                        <p>Zatím žádné odpovědi</p>
-                    </div>
-                </div>
-                
-                <div class="btn-group">
-                    <button class="btn btn-danger" onclick="clearResponses()">
-                        🗑️ Smazat všechny odpovědi
-                    </button>
-                </div>
+
+            <textarea
+                id="participantAnswer"
+                rows="4"
+                placeholder="Napiste svou odpoved..."
+            ></textarea>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()">
+                    Odeslat odpoved
+                </button>
+            </div>
+
+            <div id="successMessage" class="success-message">
+                Odpoved byla odeslana!
             </div>
         </div>
-        
+
         <footer>
             <div class="connection-status">
                 Status: <span id="connectionStatus">Odpojeno</span>
             </div>
         </footer>
     </div>
-    
+
     <script>
-        // ===========================================
-        // KONFIGURACE SUPABASE
-        // ===========================================
-        // Nahraď těmito hodnotami ze svého Supabase projektu
-        // (Settings → API → Project URL a anon public key)
         const SUPABASE_URL = 'https://ywhzaomdnxeelalwupbu.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3aHphb21kbnhlZWxhbHd1cGJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4NDM5ODgsImV4cCI6MjA4NDQxOTk4OH0.TXABm99I3H9FgFwAe7tJMzCDVAmzE0uPyqIzQZbpj_U';
-        
-        // ===========================================
-        // INICIALIZACE
-        // ===========================================
+
         let supabaseClient;
         let currentQuestion = null;
-        let responses = [];
-        let isConnected = false;
 
         async function init() {
             try {
-                // Inicializace Supabase klienta
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                
-                // Test připojení
+
                 const { data, error } = await supabaseClient.from('questions').select('*').limit(1);
-                
                 if (error) throw error;
-                
-                isConnected = true;
+
                 updateConnectionStatus(true);
-                
-                // Načtení dat
                 await loadQuestion();
-                await loadResponses();
-                
-                // Nastavení realtime subscriptions
                 setupRealtimeSubscriptions();
-                
+
             } catch (error) {
                 console.error('Chyba inicializace:', error);
                 updateConnectionStatus(false);
                 document.getElementById('errorBanner').classList.add('show');
             }
         }
-        
+
         function updateConnectionStatus(connected) {
             const statusDot = document.getElementById('statusDot');
             const statusText = document.getElementById('statusText');
             const connectionStatus = document.getElementById('connectionStatus');
-            
+
             if (connected) {
                 statusDot.classList.remove('offline');
-                statusText.textContent = 'Živě';
-                connectionStatus.textContent = 'Připojeno k Supabase';
+                statusText.textContent = 'Zive';
+                connectionStatus.textContent = 'Pripojeno';
             } else {
                 statusDot.classList.add('offline');
                 statusText.textContent = 'Offline';
                 connectionStatus.textContent = 'Odpojeno';
             }
         }
-        
-        // ===========================================
-        // REALTIME SUBSCRIPTIONS
-        // ===========================================
+
         function setupRealtimeSubscriptions() {
-            // Sledování změn otázek
             supabaseClient
                 .channel('questions-channel')
-                .on('postgres_changes', 
+                .on('postgres_changes',
                     { event: '*', schema: 'public', table: 'questions' },
                     (payload) => {
-                        console.log('Question change:', payload);
                         if (payload.eventType === 'DELETE') {
                             currentQuestion = null;
                         } else {
@@ -547,151 +347,34 @@
                     }
                 )
                 .subscribe();
-            
-            // Sledování změn odpovědí
-            supabaseClient
-                .channel('responses-channel')
-                .on('postgres_changes',
-                    { event: '*', schema: 'public', table: 'responses' },
-                    (payload) => {
-                        console.log('Response change:', payload);
-                        if (payload.eventType === 'INSERT') {
-                            responses.unshift(payload.new);
-                            updateResponsesUI(true);
-                        } else if (payload.eventType === 'DELETE') {
-                            loadResponses(); // Reload all
-                        }
-                    }
-                )
-                .subscribe();
         }
-        
-        // ===========================================
-        // DATA LOADING
-        // ===========================================
+
         async function loadQuestion() {
             const { data, error } = await supabaseClient
                 .from('questions')
                 .select('*')
                 .eq('id', 1)
                 .single();
-            
-            if (error && error.code !== 'PGRST116') { // PGRST116 = no rows
-                console.error('Chyba načítání otázky:', error);
+
+            if (error && error.code !== 'PGRST116') {
+                console.error('Chyba nacitani otazky:', error);
                 return;
             }
-            
+
             currentQuestion = data || null;
             updateQuestionUI();
         }
-        
-        async function loadResponses() {
-            const { data, error } = await supabaseClient
-                .from('responses')
-                .select('*')
-                .order('created_at', { ascending: false });
-            
-            if (error) {
-                console.error('Chyba načítání odpovědí:', error);
-                return;
-            }
-            
-            responses = data || [];
-            updateResponsesUI();
-        }
-        
-        // ===========================================
-        // ADMIN FUNKCE
-        // ===========================================
-        async function publishQuestion() {
-            const questionText = document.getElementById('adminQuestion').value.trim();
-            if (!questionText) {
-                alert('Napište prosím otázku');
-                return;
-            }
-            
-            const btn = document.getElementById('publishBtn');
-            btn.disabled = true;
-            
-            try {
-                // Upsert otázky (vždy ID = 1)
-                const { error: questionError } = await supabaseClient
-                    .from('questions')
-                    .upsert({ id: 1, text: questionText });
-                
-                if (questionError) throw questionError;
-                
-                // Smazání starých odpovědí
-                const { error: deleteError } = await supabaseClient
-                    .from('responses')
-                    .delete()
-                    .neq('id', 0);
-                
-                if (deleteError) throw deleteError;
-                
-                responses = [];
-                updateResponsesUI();
-                
-                alert('Otázka byla publikována!');
-                
-            } catch (error) {
-                console.error('Chyba publikování:', error);
-                alert('Chyba při publikování otázky');
-            } finally {
-                btn.disabled = false;
-            }
-        }
-        
-        async function clearQuestion() {
-            try {
-                const { error } = await supabaseClient
-                    .from('questions')
-                    .delete()
-                    .eq('id', 1);
-                
-                if (error) throw error;
-                
-                document.getElementById('adminQuestion').value = '';
-                currentQuestion = null;
-                updateQuestionUI();
-                
-            } catch (error) {
-                console.error('Chyba mazání otázky:', error);
-            }
-        }
-        
-        async function clearResponses() {
-            if (!confirm('Opravdu chcete smazat všechny odpovědi?')) return;
-            
-            try {
-                const { error } = await supabaseClient
-                    .from('responses')
-                    .delete()
-                    .neq('id', 0);
-                
-                if (error) throw error;
-                
-                responses = [];
-                updateResponsesUI();
-                
-            } catch (error) {
-                console.error('Chyba mazání odpovědí:', error);
-            }
-        }
-        
-        // ===========================================
-        // ÚČASTNÍK FUNKCE
-        // ===========================================
+
         async function submitAnswer() {
             const answerText = document.getElementById('participantAnswer').value.trim();
             if (!answerText) {
-                alert('Napište prosím odpověď');
+                alert('Napiste prosim odpoved');
                 return;
             }
-            
+
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
-            
+
             try {
                 const { error } = await supabaseClient
                     .from('responses')
@@ -699,104 +382,39 @@
                         question_id: 1,
                         text: answerText
                     });
-                
+
                 if (error) throw error;
-                
+
                 document.getElementById('participantAnswer').value = '';
                 document.getElementById('successMessage').classList.add('show');
-                
+
                 setTimeout(() => {
                     document.getElementById('successMessage').classList.remove('show');
                 }, 3000);
-                
+
             } catch (error) {
-                console.error('Chyba odesílání odpovědi:', error);
-                alert('Chyba při odesílání odpovědi');
+                console.error('Chyba odesilani odpovedi:', error);
+                alert('Chyba pri odesilani odpovedi');
             } finally {
                 btn.disabled = false;
             }
         }
-        
-        // ===========================================
-        // UI AKTUALIZACE
-        // ===========================================
+
         function updateQuestionUI() {
             const questionEl = document.getElementById('currentQuestion');
             const answerCard = document.getElementById('answerCard');
-            
+
             if (currentQuestion && currentQuestion.text) {
                 questionEl.textContent = currentQuestion.text;
                 questionEl.classList.remove('no-question');
                 answerCard.style.display = 'block';
             } else {
-                questionEl.textContent = 'Čekám na otázku od moderátora...';
+                questionEl.textContent = 'Cekam na otazku od moderatora...';
                 questionEl.classList.add('no-question');
                 answerCard.style.display = 'none';
             }
         }
-        
-        function updateResponsesUI(isNewResponse = false) {
-            const responsesList = document.getElementById('responsesList');
-            const responseCount = document.getElementById('responseCount');
-            
-            const count = responses.length;
-            let suffix = 'í';
-            if (count === 1) suffix = 'ěď';
-            else if (count > 1 && count < 5) suffix = 'i';
-            
-            responseCount.textContent = `${count} odpověd${suffix}`;
-            
-            if (responses.length === 0) {
-                responsesList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">💬</div>
-                        <p>Zatím žádné odpovědi</p>
-                    </div>
-                `;
-            } else {
-                responsesList.innerHTML = responses.map((r, i) => `
-                    <div class="response-item ${i === 0 && isNewResponse ? 'new' : ''}">
-                        <p>${escapeHtml(r.text)}</p>
-                        <span class="response-time">${formatTime(r.created_at)}</span>
-                    </div>
-                `).join('');
-            }
-        }
-        
-        // ===========================================
-        // POMOCNÉ FUNKCE
-        // ===========================================
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        function formatTime(isoString) {
-            const date = new Date(isoString);
-            return date.toLocaleTimeString('cs-CZ', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                second: '2-digit'
-            });
-        }
-        
-        // ===========================================
-        // NAVIGACE
-        // ===========================================
-        document.querySelectorAll('.nav-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-                
-                tab.classList.add('active');
-                document.getElementById(tab.dataset.tab).classList.add('active');
-            });
-        });
-        
-        // ===========================================
-        // SPUŠTĚNÍ
-        // ===========================================
+
         init();
     </script>
 </body>
