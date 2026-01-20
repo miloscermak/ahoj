@@ -19,11 +19,13 @@ Jednoduchá webová aplikace pro interaktivní otázky a odpovědi na workshopec
 
 ```
 /
-├── index.html          # Hlavní aplikace (účastník + admin v tabech)
-├── supabase-schema.sql # SQL pro inicializaci databáze
-├── netlify.toml        # Konfigurace Netlify
-├── .env.example        # Šablona pro env proměnné
-└── CLAUDE.md           # Tento soubor
+├── index.html            # Rozhraní pro účastníky
+├── admin/index.html      # Admin rozhraní
+├── supabase-schema.sql   # SQL pro inicializaci databáze
+├── supabase-migration.sql # Migrace pro trvalé ukládání otázek
+├── netlify.toml          # Konfigurace Netlify
+├── .env.example          # Šablona pro env proměnné
+└── CLAUDE.md             # Tento soubor
 ```
 
 ## Setup Supabase
@@ -34,10 +36,13 @@ Jednoduchá webová aplikace pro interaktivní otázky a odpovědi na workshopec
 - Zapamatuj si **Project URL** a **anon key** (Settings → API)
 
 ### 2. Spusť SQL schéma
-V Supabase SQL Editoru spusť obsah `supabase-schema.sql`:
+V Supabase SQL Editoru spusť obsah `supabase-migration.sql` (nové schéma s historií):
 - Vytvoří tabulky `questions` a `responses`
+- Přidá sloupec `is_active` pro označení aktivní otázky
 - Nastaví RLS policies (veřejný přístup)
 - Zapne realtime pro obě tabulky
+
+**Poznámka:** Soubor `supabase-schema.sql` obsahuje staré schéma (bez historie). Pro nové instalace použij `supabase-migration.sql`.
 
 ### 3. Environment variables
 Supabase credentials půjdou do kódu jako konstanty (pro jednoduchost) nebo přes Netlify env variables.
@@ -76,31 +81,37 @@ Prostě otevři `index.html` v prohlížeči. Pro plnou funkcionalitu potřebuje
 ## Databázové schéma
 
 ```sql
-questions (vždy max 1 záznam)
-├── id: 1 (fixed)
-├── text: TEXT
+questions (historie všech otázek)
+├── id: BIGSERIAL PRIMARY KEY
+├── text: TEXT NOT NULL
+├── is_active: BOOLEAN DEFAULT true
 └── created_at: TIMESTAMP
 
 responses
-├── id: BIGSERIAL
-├── question_id: 1
-├── text: TEXT
+├── id: BIGSERIAL PRIMARY KEY
+├── question_id: BIGINT (FK -> questions.id, ON DELETE CASCADE)
+├── text: TEXT NOT NULL
 └── created_at: TIMESTAMP
 ```
+
+Otázky a odpovědi se trvale uchovávají v databázi. Sloupec `is_active` označuje aktuálně zobrazenou otázku.
 
 ## Klíčové funkce
 
 ### Admin
-- `publishQuestion()` - upsert do questions, smaže staré responses
-- `clearQuestion()` - smaže otázku
-- `clearResponses()` - smaže všechny odpovědi
+- `publishQuestion()` - deaktivuje předchozí otázku, vytvoří novou aktivní otázku
+- `deactivateQuestion()` - ukončí aktuální otázku (nastaví `is_active = false`)
+- `loadHistory()` - načte historii všech otázek s odpověďmi
 
 ### Účastník
-- `submitAnswer()` - insert do responses
-- Realtime subscription zobrazuje otázku okamžitě
+- `submitAnswer()` - insert do responses s `question_id` aktivní otázky
+- Realtime subscription zobrazuje aktivní otázku okamžitě
 
 ### Realtime
 Supabase channels na `questions` a `responses` tabulky. Změny se propagují všem klientům automaticky.
+
+### Historie
+Všechny otázky a odpovědi zůstávají v databázi. Admin rozhraní obsahuje sekci "Historie otázek" kde lze procházet minulé otázky a jejich odpovědi.
 
 ## TODO / Možná rozšíření
 

@@ -296,7 +296,7 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3aHphb21kbnhlZWxhbHd1cGJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4NDM5ODgsImV4cCI6MjA4NDQxOTk4OH0.TXABm99I3H9FgFwAe7tJMzCDVAmzE0uPyqIzQZbpj_U';
 
         let supabaseClient;
-        let currentQuestion = null;
+        let activeQuestion = null;
 
         async function init() {
             try {
@@ -306,7 +306,7 @@
                 if (error) throw error;
 
                 updateConnectionStatus(true);
-                await loadQuestion();
+                await loadActiveQuestion();
                 setupRealtimeSubscriptions();
 
             } catch (error) {
@@ -337,23 +337,21 @@
                 .channel('questions-channel')
                 .on('postgres_changes',
                     { event: '*', schema: 'public', table: 'questions' },
-                    (payload) => {
-                        if (payload.eventType === 'DELETE') {
-                            currentQuestion = null;
-                        } else {
-                            currentQuestion = payload.new;
-                        }
-                        updateQuestionUI();
+                    async (payload) => {
+                        // Pri jakekoli zmene znovu nacist aktivni otazku
+                        await loadActiveQuestion();
                     }
                 )
                 .subscribe();
         }
 
-        async function loadQuestion() {
+        async function loadActiveQuestion() {
             const { data, error } = await supabaseClient
                 .from('questions')
                 .select('*')
-                .eq('id', 1)
+                .eq('is_active', true)
+                .order('created_at', { ascending: false })
+                .limit(1)
                 .single();
 
             if (error && error.code !== 'PGRST116') {
@@ -361,13 +359,13 @@
                 return;
             }
 
-            currentQuestion = data || null;
+            activeQuestion = data || null;
             updateQuestionUI();
         }
 
         async function submitAnswer() {
             const answerText = document.getElementById('participantAnswer').value.trim();
-            if (!answerText) {
+            if (!answerText || !activeQuestion) {
                 alert('Napiste prosim odpoved');
                 return;
             }
@@ -379,7 +377,7 @@
                 const { error } = await supabaseClient
                     .from('responses')
                     .insert({
-                        question_id: 1,
+                        question_id: activeQuestion.id,
                         text: answerText
                     });
 
@@ -404,8 +402,8 @@
             const questionEl = document.getElementById('currentQuestion');
             const answerCard = document.getElementById('answerCard');
 
-            if (currentQuestion && currentQuestion.text) {
-                questionEl.textContent = currentQuestion.text;
+            if (activeQuestion && activeQuestion.text) {
+                questionEl.textContent = activeQuestion.text;
                 questionEl.classList.remove('no-question');
                 answerCard.style.display = 'block';
             } else {
