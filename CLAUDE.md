@@ -22,7 +22,8 @@ Jednoduchá webová aplikace pro interaktivní otázky a odpovědi na workshopec
 ├── index.html            # Rozhraní pro účastníky
 ├── admin/index.html      # Admin rozhraní
 ├── supabase-schema.sql   # SQL pro inicializaci databáze
-├── supabase-migration.sql # Migrace pro trvalé ukládání otázek
+├── supabase-migration.sql     # Migrace pro trvalé ukládání otázek
+├── supabase-add-participant.sql # Migrace pro přidání participant_id
 ├── netlify.toml          # Konfigurace Netlify
 ├── .env.example          # Šablona pro env proměnné
 └── CLAUDE.md             # Tento soubor
@@ -90,11 +91,15 @@ questions (historie všech otázek)
 responses
 ├── id: BIGSERIAL PRIMARY KEY
 ├── question_id: BIGINT (FK -> questions.id, ON DELETE CASCADE)
+├── participant_id: TEXT (UUID z localStorage účastníka)
 ├── text: TEXT NOT NULL
 └── created_at: TIMESTAMP
 ```
 
 Otázky a odpovědi se trvale uchovávají v databázi. Sloupec `is_active` označuje aktuálně zobrazenou otázku.
+
+### Identifikace účastníků
+Každý účastník dostane při první návštěvě náhodné UUID uložené do localStorage. Toto ID se posílá s každou odpovědí, což umožňuje sledovat odpovědi jednoho účastníka napříč více otázkami v rámci session.
 
 ## Klíčové funkce
 

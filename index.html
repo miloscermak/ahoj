@@ -297,10 +297,22 @@
 
         let supabaseClient;
         let activeQuestion = null;
+        let participantId = null;
+
+        function getOrCreateParticipantId() {
+            const STORAGE_KEY = 'workshop_participant_id';
+            let id = localStorage.getItem(STORAGE_KEY);
+            if (!id) {
+                id = crypto.randomUUID();
+                localStorage.setItem(STORAGE_KEY, id);
+            }
+            return id;
+        }
 
         async function init() {
             try {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                participantId = getOrCreateParticipantId();
 
                 const { data, error } = await supabaseClient.from('questions').select('*').limit(1);
                 if (error) throw error;
@@ -378,6 +390,7 @@
                     .from('responses')
                     .insert({
                         question_id: activeQuestion.id,
+                        participant_id: participantId,
                         text: answerText
                     });
 

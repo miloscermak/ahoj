@@ -401,6 +401,15 @@
         .collapsed {
             display: none;
         }
+
+        .participant-tag {
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-right: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -694,7 +703,8 @@
             const responseCount = document.getElementById('responseCount');
 
             const count = responses.length;
-            responseCount.textContent = `${count} odpoved${count === 1 ? '' : 'i'}`;
+            const uniqueParticipants = new Set(responses.map(r => r.participant_id).filter(Boolean)).size;
+            responseCount.textContent = `${count} odpoved${count === 1 ? '' : 'i'} od ${uniqueParticipants} ucastnik${uniqueParticipants === 1 ? 'a' : 'u'}`;
 
             if (responses.length === 0) {
                 responsesList.innerHTML = `
@@ -707,10 +717,17 @@
                 responsesList.innerHTML = responses.map((r, i) => `
                     <div class="response-item ${i === 0 && isNewResponse ? 'new' : ''}">
                         <p>${escapeHtml(r.text)}</p>
-                        <span class="response-time">${formatTime(r.created_at)}</span>
+                        <span class="response-time">
+                            ${r.participant_id ? `<span class="participant-tag">${shortId(r.participant_id)}</span>` : ''}
+                            ${formatTime(r.created_at)}
+                        </span>
                     </div>
                 `).join('');
             }
+        }
+
+        function shortId(uuid) {
+            return uuid ? uuid.substring(0, 6) : '?';
         }
 
         function updateHistoryUI() {
@@ -730,11 +747,15 @@
             } else {
                 historyList.innerHTML = historyQuestions.map((q, i) => {
                     const responseCount = q.responses ? q.responses.length : 0;
+                    const uniqueParticipants = q.responses ? new Set(q.responses.map(r => r.participant_id).filter(Boolean)).size : 0;
                     const responsesHtml = q.responses && q.responses.length > 0
                         ? q.responses.map(r => `
                             <div class="history-response">
                                 <p>${escapeHtml(r.text)}</p>
-                                <div class="history-response-time">${formatTime(r.created_at)}</div>
+                                <div class="history-response-time">
+                                    ${r.participant_id ? `<span class="participant-tag">${shortId(r.participant_id)}</span>` : ''}
+                                    ${formatTime(r.created_at)}
+                                </div>
                             </div>
                         `).join('')
                         : '<p style="color: var(--text-dim); font-style: italic;">Zadne odpovedi</p>';
@@ -744,7 +765,7 @@
                             <div class="history-item-header">
                                 <span class="history-item-question">${escapeHtml(q.text)}</span>
                                 <span class="history-item-meta">
-                                    <span>${responseCount} odpovedi</span>
+                                    <span>${responseCount} odpovedi${uniqueParticipants > 0 ? ` (${uniqueParticipants} ucast.)` : ''}</span>
                                     <span>${formatDateTime(q.created_at)}</span>
                                 </span>
                             </div>
